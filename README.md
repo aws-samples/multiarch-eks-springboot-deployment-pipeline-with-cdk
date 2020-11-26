@@ -27,12 +27,13 @@ TODO
 git clone https://github.com/lazydragon/eks_arm_with_gitlab_cicd.git
 
 # Prepare env
-cd eks_arm_with_gitlab_cicd
+cd eks_arm_with_gitlab_cicd/cdk
 python3 -m venv .env
 
 # Run cdk to deploy both springboot application backend and deployment pipeline
-cd cdk
-./bootstrap.sh {AWS ACCOUNT ID}
+# Please make sure CodeBuild ARM support(https://aws.amazon.com/codebuild/pricing/) is available in the chosen region 
+./bootstrap.sh {AWS ACCOUNT ID} {REGION}
+# e.g. ./bootstrap.sh 12345678 us-east-1
 
 # Don't forget to note down the CDK outputs
 # Such as TODO
