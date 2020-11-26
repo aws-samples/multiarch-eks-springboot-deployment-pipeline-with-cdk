@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
 from aws_cdk import (core,  aws_lambda as lambda_, 
                      aws_s3 as s3, aws_eks as eks,
                      aws_iam as iam, aws_ec2 as ec2,
