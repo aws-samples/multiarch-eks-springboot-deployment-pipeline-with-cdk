@@ -1,9 +1,8 @@
 #!/bin/bash
 if [[ $# -ge 2 ]]; then
+    source .env/bin/activate
     export CDK_DEPLOY_ACCOUNT=$1
     export CDK_DEPLOY_REGION=$2
-    shift; shift
-    source .env/bin/activate
     pip install -r requirements.txt
     cdk bootstrap aws://$1/$2
     # cdk deploy backend
