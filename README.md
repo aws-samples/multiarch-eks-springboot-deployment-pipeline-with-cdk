@@ -19,13 +19,13 @@ Follow the [instructions](https://kubernetes.io/docs/tasks/tools/install-kubectl
 
 ## Step by step guidance
 1. Create Systems Manager Parameter Store in the console
-1.1 Search system manager in services
-1.2 Click Parameter Store in the left panel
-1.3 Prepare your dockerhub username and access token
-1.4 Click Create to create a new parameter, input Name as `/springboot-multiarch/dockerhub/username` and Value as your dockerhub username
-1.5 Leave the others as default and click Create Parameter
-1.6 Click Create to create a new parameter, input Name as `/springboot-multiarch/dockerhub/password` and Value as your dockerhub access token
-1.7 Leave the others as default and click Create Parameter
+- Search system manager in services
+- Click Parameter Store in the left panel
+- Prepare your dockerhub username and access token
+- Click Create to create a new parameter, input Name as `/springboot-multiarch/dockerhub/username` and Value as your dockerhub username
+- Leave the others as default and click Create Parameter
+- Click Create to create a new parameter, input Name as `/springboot-multiarch/dockerhub/password` and Value as your dockerhub access token
+- Leave the others as default and click Create Parameter
 
 
 2. Checkout the code, deploy both springboot application backend and deployment pipeline on AWS via CDK
