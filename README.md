@@ -27,7 +27,7 @@ TODO
 git clone https://github.com/aws-samples/multiarch-eks-springboot-deployment-pipeline-with-cdk.git
 
 # Prepare env
-cd eks_arm_with_gitlab_cicd/cdk
+cd multiarch-eks-springboot-deployment-pipeline-with-cdk/cdk
 python3 -m venv .env
 
 # Run cdk to deploy both springboot application backend and deployment pipeline
