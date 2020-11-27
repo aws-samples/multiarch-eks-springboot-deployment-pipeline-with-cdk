@@ -44,18 +44,8 @@ class BackendStack(core.Stack):
             iam.ManagedPolicy.from_aws_managed_policy_name("SecretsManagerReadWrite"))
         
         # create service account
-        sa = cluster.add_service_account("LBControllerServiceAccount", name="aws-load-balancer-controller", 
-                                        namespace="kube-system")
-        sa_annotated = self.add_helm_annotation(cluster, sa)
-        
-        # create policy for the service account
-        statements = []
-        with open('backend/iam_policy.json') as f:
-            data = json.load(f)
-            for s in data["Statement"]:
-                statements.append(iam.PolicyStatement.from_json(s))
-        policy = iam.Policy(self, "LBControllerPolicy", statements=statements)
-        policy.attach_to_role(sa.role)
+        sa = self.add_service_account(cluster=cluster, name="aws-load-balancer-controller", 
+                                      namespace="kube-system")
         
         # add helm charts
         ingress = cluster.add_helm_chart("LBIngress", chart="aws-load-balancer-controller",
@@ -66,8 +56,7 @@ class BackendStack(core.Stack):
                                     "serviceAccount.name": "aws-load-balancer-controller",
                                     "serviceAccount.create": "false"
                                 })
-        ingress.node.add_dependency(sa_annotated)
-        
+
         return cluster
         
         
@@ -111,27 +100,47 @@ class BackendStack(core.Stack):
         return rds_cluster
         
     
-    def add_helm_annotation(self, cluster, service_account):
+    def add_service_account(self, cluster, name, namespace):
         """
         workaround to add helm role to service account
         
         """
+        # create role 
+        conditions = core.CfnJson(self, 'ConditionJson',
+          value = {
+            "%s:aud" % cluster.cluster_open_id_connect_issuer : "sts.amazonaws.com",
+            "%s:sub" % cluster.cluster_open_id_connect_issuer : "system:serviceaccount:%s:%s" % (namespace, name),
+          },
+        )
+        principal = iam.OpenIdConnectPrincipal(cluster.open_id_connect_provider).with_conditions({
+          "StringEquals": conditions,
+        })
+        role = iam.Role(self, 'ServiceAccountRole', assumed_by=principal)
         
-        return eks.KubernetesManifest(self, "ServiceAccountManifest", cluster=cluster,
+        # create policy for the service account
+        statements = []
+        with open('backend/iam_policy.json') as f:
+            data = json.load(f)
+            for s in data["Statement"]:
+                statements.append(iam.PolicyStatement.from_json(s))
+        policy = iam.Policy(self, "LBControllerPolicy", statements=statements)
+        policy.attach_to_role(role)
+    
+        return eks.KubernetesManifest(self, "ServiceAccount", cluster=cluster,
           manifest=[{
             "apiVersion": "v1",
             "kind": "ServiceAccount",
             "metadata": {
-              "name": service_account.service_account_name,
-              "namespace": service_account.service_account_namespace, 
+              "name": name, 
+              "namespace": namespace ,
               "labels": {
-                "app.kubernetes.io/name": service_account.service_account_name,
+                "app.kubernetes.io/name": name, 
                 "app.kubernetes.io/managed-by": "Helm",
               },
               "annotations": {
-                "eks.amazonaws.com/role-arn": service_account.role.role_arn,
-                "meta.helm.sh/release-name": service_account.service_account_name,
-                "meta.helm.sh/release-namespace": service_account.service_account_namespace,
+                "eks.amazonaws.com/role-arn": role.role_arn,
+                "meta.helm.sh/release-name": name, 
+                "meta.helm.sh/release-namespace": namespace, 
               },
             },
           }],
