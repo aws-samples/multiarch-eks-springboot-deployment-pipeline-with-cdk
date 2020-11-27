@@ -86,7 +86,7 @@ kubectl describe ingress | grep Address
 ## Cleanup
 ```
 cd cdk
-./cleanup.sh
+./cleanup.sh {AWS ACCOUNT ID} {REGION}
 ```
 
 # Security
