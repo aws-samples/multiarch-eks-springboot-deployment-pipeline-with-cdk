@@ -10,16 +10,23 @@
 
 # Run the Pipeline
 ## Prerequisite
-1. install cdk
-2. dockerhub account
-3. install aws cli & config access
-4. install kubectl
+1. Install cdk
+Follow the [prerequisites and install guidance](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html#getting_started_prerequisites). CDK will be used to deploy the application backend and deployment pipeline stacks.
+2. Dockerhub account and access token
+Access token can be created in [dockerhub](https://hub.docker.com/settings/security). The username and token will be used to pull images from dockerhub during code build phase.
+3. Install kubectl
+Follow the [instructions](https://kubernetes.io/docs/tasks/tools/install-kubectl/). kubectl will be used to communicate with the ESK cluster.
 
 ## Step by step guidance
-1. create Systems Manager Parameter on the console
-/springboot-multiarch/dockerhub/username
-/springboot-multiarch/dockerhub/password
-TODO
+1. Create Systems Manager Parameter Store in the console
+1.1 Search system manager in services
+1.2 Click Parameter Store in the left panel
+1.3 Prepare your dockerhub username and access token
+1.4 Click Create to create a new parameter, input Name as `/springboot-multiarch/dockerhub/username` and Value as your dockerhub username
+1.5 Leave the others as default and click Create Parameter
+1.6 Click Create to create a new parameter, input Name as `/springboot-multiarch/dockerhub/password` and Value as your dockerhub access token
+1.7 Leave the others as default and click Create Parameter
+
 
 2. Checkout the code, deploy both springboot application backend and deployment pipeline on AWS via CDK
 ```
@@ -37,12 +44,15 @@ python3 -m venv .env
 ./bootstrap.sh {AWS ACCOUNT ID} {REGION}
 
 # Don't forget to note down the CDK outputs
-# Such as TODO
+# i.e.
+# backend.EKSConfigCommandxxxx
+# pipeline.CodeCommitOutput
 ```
 
 3. Commit code to codecommit to trigger the pipeline
 ```
 # Checkout the new codecommit respository created by CDK in step 2
+# i.e. value of pipeline.CodeCommitOutput
 git clone https://git-codecommit.{REGION}.amazonaws.com/v1/repos/springboot-multiarch test
 
 # Copy source code to the new codecommit repository
@@ -58,7 +68,7 @@ git push
 4. Get application load balancer(ALB) address and visit
 ```
 # Config kubectl to connect to the EKS cluster created by CDK in step 2
-# Check CDK output TODO
+# Check CDK output backend.EKSConfigCommandxxxx
 # e.g. aws eks update-kubeconfig --name {EKS CLUSTER NAME} --region {REGION} --role-arn {EKS MASTER IAM ROLE}
 
 # get ALB address from kubernetes cluster
@@ -66,6 +76,12 @@ kubectl describe ingress | grep Address
 ```
 
 ## Expected results
+1. Visit the ALB address output from step 4 in the last section. NOTE: You need to wait for about 1 minute before ALB is successfully provisioned.
+2. Confirm browser shows the content similar to:
+```
+{"RDS Test":"passed","Node Name":"ip-10-xx-xxx-xx.ap-northeast-1.compute.internal","Redis Test":"passed"}
+```
+3. Refresh the page several times to observe the Node Name switch. The nodes are running AMD and ARM (graviton) correspondingly.
 
 ## Cleanup
 ```
