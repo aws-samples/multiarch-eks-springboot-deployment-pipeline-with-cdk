@@ -29,7 +29,7 @@ Follow the [instructions](https://kubernetes.io/docs/tasks/tools/install-kubectl
 
 
 2. Checkout the code, deploy both springboot application backend and deployment pipeline on AWS via CDK
-```
+```shell
 # Checkout the code
 git clone https://github.com/aws-samples/multiarch-eks-springboot-deployment-pipeline-with-cdk.git
 
@@ -50,7 +50,7 @@ python3 -m venv .env
 ```
 
 3. Commit code to codecommit to trigger the pipeline
-```
+```shell
 # Checkout the new codecommit respository created by CDK in step 2
 # i.e. value of pipeline.CodeCommitOutput
 git clone https://git-codecommit.{REGION}.amazonaws.com/v1/repos/springboot-multiarch test
@@ -66,7 +66,7 @@ git push
 ```
 
 4. Get application load balancer(ALB) address and visit
-```
+```shell
 # Config kubectl to connect to the EKS cluster created by CDK in step 2
 # Check CDK output backend.EKSConfigCommandxxxx
 # e.g. aws eks update-kubeconfig --name {EKS CLUSTER NAME} --region {REGION} --role-arn {EKS MASTER IAM ROLE}
@@ -84,7 +84,7 @@ kubectl describe ingress | grep Address
 3. Refresh the page several times to observe the Node Name switch. The nodes are running AMD and ARM (graviton) correspondingly.
 
 ## Cleanup
-```
+```shell
 cd cdk
 ./cleanup.sh {AWS ACCOUNT ID} {REGION}
 ```
