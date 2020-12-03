@@ -8,8 +8,19 @@ In this sample, you will build a java springboot application on a hybrid ARM & A
 ## Architecture diagram
 ![Architecture](/readme_img/architecture.png)
 
-### deployment pipeline
-### springboot application backend
+### springboot application backend walk through
+1. End users send request to a public application load balancer(ALB).
+2. ALB send request to AWS load balancer ingress in EKS cluster. The EKS cluster contains 2 managed node groups, one with AMD instances, the other with Graviton 2 (ARM) instances.
+3. AWS load balancer ingress route requests to the springboot application service. Springboot application service contains pods running on both AMD and ARM nodes.
+4. Springboot pods talks to RDS Aurora, Elasticache Redis and generate the response.
+
+### deployment pipeline walk through
+1. Devops users commit code to AWS CodeCommit.
+2. The code commit triggers AWS CodePipeline, starting with a build phase. Build phase has 2 tasks running on AWS CodeBuild in parallel, one is on AMD instance to compile source code and build the AMD docker image, the other is on Graviton 2 instance to build the ARM docker image. They both push the docker image to ECR at the end of the task.
+3. When both tasks in build phase succeeds, a post build phase is triggered. The post buid task creates a docker manifest on top of the ARM and AMD docker images. The manifest alias will route to ARM or AMD docker image based on the architecture of the requester. 
+4. The post build task commits the manifest to ECR. 
+5. The post build task runs kubectl to apply kubernetes config changes, update springboot service image to the newly created manifest alias.
+6. Springboot service picks up the config change, pods download the image matching the architecture of their hosting nodes, via the manifest alias.
 
 # Run the Pipeline
 ## Prerequisite
