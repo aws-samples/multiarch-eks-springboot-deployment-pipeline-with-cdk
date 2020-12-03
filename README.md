@@ -2,7 +2,9 @@
 
 # Overview
 AWS Graviton 2(using ARM) provides up to 40% better price performance over comparable current generation x86-based instances for a wide variety of workloads.
+
 A hybrid ARM & AMD deployment takes advantage of the Graviton instances, at the same time lowers risks to migrate from AMD to ARM in one shot.
+
 In this sample, you will build a java springboot application on a hybrid ARM & AMD EKS cluster. You will use the same source code to trigger an automatic deployment pipeline, build on both ARM and AMD. The whole setup is based on AWS Cloud Development Kit(CDK). 
 
 ## Architecture diagram
