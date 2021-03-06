@@ -47,8 +47,7 @@ Follow the [instructions](https://kubernetes.io/docs/tasks/tools/install-kubectl
 2. Checkout the code, deploy both springboot application backend and deployment pipeline on AWS via CDK
 ```shell
 # Checkout the code
-# git clone https://github.com/aws-samples/multiarch-eks-springboot-deployment-pipeline-with-cdk.git
-git clone https://github.com/htesg/multiarch-eks-springboot-deployment-pipeline-with-cdk.git
+git clone https://github.com/aws-samples/multiarch-eks-springboot-deployment-pipeline-with-cdk.git
 
 # Prepare env
 cd multiarch-eks-springboot-deployment-pipeline-with-cdk/cdk
