@@ -77,7 +77,7 @@ git clone https://git-codecommit.{REGION}.amazonaws.com/v1/repos/springboot-mult
 
 # Copy source code to the new codecommit repository
 cd test
-cp -r ../springboot-multiarch/* .
+cp -r ../multiarch-eks-springboot-deployment-pipeline-with-cdk/* .
 
 # Commit source code to trigger deployment pipeline
 git add *
