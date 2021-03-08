@@ -59,7 +59,7 @@ python3 -m venv .env
 # e.g. ./bootstrap.sh 12345678 us-east-1
 ./bootstrap.sh {AWS ACCOUNT ID} {REGION}
 
-# Don't forget to note down the CDK outputs
+# Make a note of CDK outputs
 # i.e.
 # backend.EKSConfigCommandxxxx
 # pipeline.CodeCommitOutput
@@ -69,11 +69,15 @@ python3 -m venv .env
 ```shell
 # Checkout the new codecommit respository created by CDK in step 2
 # i.e. value of pipeline.CodeCommitOutput
+#   (make sure you are in the same filepath as in step 2 where you checkout the code)
+#   e.g. 
+#   ~/environment/multiarch-eks-springboot-deployment-pipeline-with-cdk/cdk (main) $ cd ../..
+#   ~/environment $
 git clone https://git-codecommit.{REGION}.amazonaws.com/v1/repos/springboot-multiarch test
 
 # Copy source code to the new codecommit repository
 cd test
-cp -r ../springboot-multiarch/* .
+cp -r ../multiarch-eks-springboot-deployment-pipeline-with-cdk/* .
 
 # Commit source code to trigger deployment pipeline
 git add *
@@ -89,6 +93,7 @@ git push
 
 # get ALB address from kubernetes cluster
 kubectl describe ingress | grep Address 
+# e.g. Address:          k8s-default-springbo-cd123ab45c-98765432.{REGION}.elb.amazonaws.com
 ```
 
 ## Expected results
