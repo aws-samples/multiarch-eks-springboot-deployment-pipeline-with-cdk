@@ -31,12 +31,12 @@ class BackendStack(core.Stack):
         
     def create_eks(self, vpc):
         # create eks cluster with amd nodegroup
-        cluster = eks.Cluster(self, "EKS", vpc=vpc, version=eks.KubernetesVersion.V1_18,
+        cluster = eks.Cluster(self, "EKS", vpc=vpc, version=eks.KubernetesVersion.V1_21,
                                 default_capacity_instance=ec2.InstanceType("m5.large"),
                                 default_capacity=1)
         # add arm/graviton nodegroup
-        cluster.add_nodegroup_capacity("graviton", desired_size=1, 
-                                instance_type=ec2.InstanceType("m6g.large"), 
+        cluster.add_nodegroup_capacity("graviton", desired_size=1,
+                                instance_type=ec2.InstanceType("m6g.large"),
                                 nodegroup_name="graviton", node_role=cluster.default_nodegroup.role)
                                 
         # add secret access to eks node role
